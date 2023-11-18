@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity" >
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#190E2E"
+        app:title="@string/app_name"
+        app:logo="@drawable/songicon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </androidx.appcompat.widget.Toolbar>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,62 +34,94 @@
 
     </LinearLayout>
 
+
+
     <LinearLayout
+        android:id="@+id/bottomPlayer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.11"
         android:orientation="horizontal"
-        android:padding="3dp">
+        android:background="@drawable/minimize_player_bakcground"
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imgSongBottom"-->
-<!--            android:layout_width="80dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_gravity="center_vertical"-->
-<!--            android:layout_margin="1dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:src="@mipmap/ic_launcher_round" />-->
-
-        <ImageButton
-            android:id="@+id/imgbtnPrev"
-            android:layout_width="wrap_content"
+        android:layout_margin="4dp">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/none"
-            android:src="@android:drawable/ic_media_previous" />
+            android:orientation="horizontal"
 
-        <ImageButton
-            android:id="@+id/imgbtnPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/none"
-            android:src="@android:drawable/ic_media_play" />
+            android:padding="6dp"
+            android:layout_margin="4dp">
 
-        <ImageButton
-            android:id="@+id/imgbtnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="1dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/none"
-            android:src="@android:drawable/ic_media_next" />
+            <!--        <ImageView-->
+            <!--            android:id="@+id/imgSongBottom"-->
+            <!--            android:layout_width="80dp"-->
+            <!--            android:layout_height="match_parent"-->
+            <!--            android:layout_gravity="center_vertical"-->
+            <!--            android:layout_margin="1dp"-->
+            <!--            android:layout_weight="1"-->
+            <!--            android:src="@mipmap/ic_launcher_round" />-->
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"/>
+            <ImageView
+                android:layout_width="38dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
+
+                android:backgroundTint="@color/none"
+                android:src="@drawable/headphoneicon"
+                android:scaleType="fitXY"
+
+                />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"/>
+            <ImageButton
+                android:id="@+id/imgbtnPrev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="1dp"
+                android:layout_weight="0.8"
+                android:backgroundTint="@color/none"
+                android:src="@android:drawable/ic_media_rew" />
+
+            <ImageButton
+                android:id="@+id/imgbtnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="1dp"
+                android:layout_weight="0.8"
+                android:backgroundTint="@color/none"
+                android:src="@android:drawable/ic_media_play" />
+
+            <ImageButton
+                android:id="@+id/imgbtnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="1dp"
+                android:layout_weight="0.8"
+                android:backgroundTint="@color/none"
+                android:src="@android:drawable/ic_media_ff" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/prgressbarSongProgress"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.02"
+            android:max="10"
+            android:progress="3" />
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/prgressbarSongProgress"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.02"
-        android:max="10"
-        android:progress="3" />
-
 
 </LinearLayout>

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         final int[] currentIndex = new int[1];
         final String[] path = new String[1];
-
+        final boolean[] flag = {false};
         listViewSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -139,10 +139,19 @@ public class MainActivity extends AppCompatActivity {
                 currentIndex[0] = i;
                 SongsList.get(i).running = true;
                 try {
+
+
+                    if(flag[0]) {
+                        mediaPlayer.stop();
+                        flag[0] = false ;
+                        imgbtnPlay.setImageResource(android.R.drawable.ic_media_play);
+
+                    }
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.reset();
                     mediaPlayer.setDataSource(path[0]);
                     mediaPlayer.prepare();
+
 
 
                 } catch (IOException e) {
@@ -153,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final boolean[] flag = {false};
+
         imgbtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,8 +214,10 @@ public class MainActivity extends AppCompatActivity {
         imgbtnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentIndex[0]  > 0) { // Check if there is a previous song
+                SongsList.get(currentIndex[0]).running = false ;
+                if (currentIndex[0]  > 0) {
                     currentIndex[0] --;
+                    SongsList.get(currentIndex[0]).running = true  ;
                     playSong(SongsList.get(currentIndex[0] ).getPath());
                     if(flag[0] == false ){
                         flag[0]=true ;
