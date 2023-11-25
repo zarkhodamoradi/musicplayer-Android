@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton imgbtnPrev;
     MediaPlayer mediaPlayer;
     int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    LinearLayout bottomPlayer ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         if (SongsList.get(position).running) {
                             view.setBackgroundColor(Color.argb(20, 255, 255, 255)); // Selected color
                         } else {
-                            view.setBackgroundColor(Color.TRANSPARENT); // Default color
+                            view.setBackgroundColor(getColor(R.color.Black)); // Default color
                         }
                         return view;
                     }
@@ -130,11 +133,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 for (int j = 0; j < adapterView.getChildCount(); j++) {
-                    adapterView.getChildAt(j).setBackgroundColor(Color.TRANSPARENT);
+                    adapterView.getChildAt(j).setBackgroundColor(getColor(R.color.Black));
                     SongsList.get(j).running = false ;
                 }
                 view.setBackgroundColor(Color.argb(20, 255, 255, 255));
 
+                if(SongsList.get(currentIndex[0]).running) SongsList.get(currentIndex[0]).running=false ;
                 path[0] = SongsList.get(i).getPath();
                 currentIndex[0] = i;
                 SongsList.get(i).running = true;
@@ -191,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
+                adapter.notifyDataSetChanged();
+
             }
         });
         imgbtnNext.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +233,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        bottomPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this , SongActivity.class);
+                intent.putExtra("songName",SongsList.get(currentIndex[0]).getSongName());
+                intent.putExtra("singerName",SongsList.get(currentIndex[0]).getSingerName());
+intent.putExtra("curretIndex",currentIndex[0]);
+intent.putExtra("flag",flag[0]);
+
+
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -235,6 +254,7 @@ public class MainActivity extends AppCompatActivity {
         imgbtnPlay = findViewById(R.id.imgbtnPlay);
         imgbtnNext = findViewById(R.id.imgbtnNext);
         imgbtnPrev = findViewById(R.id.imgbtnPrev);
+        bottomPlayer= findViewById(R.id.bottomPlayer);
 
     }
     public void playSong(String path) {

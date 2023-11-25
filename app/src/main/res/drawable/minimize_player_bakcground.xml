@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+
     <solid
-        android:color="#3C1F084C" >
+        android:color="@color/black">
+
     </solid>
 
-    <!-- View border color and width -->
-
-
+<gradient
+    android:startColor="#321B60" android:endColor="#3C1F084C"></gradient>
     <!-- The radius makes the corners rounded -->
-    <corners
-        android:radius="40dp"   >
-    </corners>
+
 </shape>

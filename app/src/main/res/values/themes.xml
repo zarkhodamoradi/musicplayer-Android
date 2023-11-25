@@ -6,6 +6,8 @@
         <!-- Type your colour code which you want to set in colorPrimary item -->
 
     </style>
-
+<style name="colorback">
+    <item name="android:backgroundTint">#00FFFFFF</item>
+</style>
 
 </resources>
