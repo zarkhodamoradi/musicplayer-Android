@@ -28,20 +28,26 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ListView listViewSongs;
-    ImageButton imgbtnPlay;
+    public static ImageButton imgbtnPlay;
     ImageButton imgbtnNext;
     ImageButton imgbtnPrev;
-    MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
+    public static String path;
     int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    LinearLayout bottomPlayer ;
+    LinearLayout bottomPlayer;
+
+    public static Boolean flag;
+    public static int currentIndex = 0;
+    public static ArrayList<song> SongsList;
+    public static ArrayAdapter<song> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SetUPView();
-      //  mediaPlayer = new MediaPlayer();
-        ArrayList<song> SongsList = new ArrayList<>();
+        //  mediaPlayer = new MediaPlayer();
+        SongsList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         cursor.close();
 
-        ArrayAdapter<song> adapter =
+        adapter =
                 new ArrayAdapter<song>(MainActivity.this, android.R.layout.simple_list_item_2, android.R.id.text1, SongsList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -115,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
                         // Set title and subtitle
                         text1.setText(SongsList.get(position).getSongName());
                         text2.setText(SongsList.get(position).getSingerName());
+
+                        text2.setTextColor(Color.argb(100,255,255,255));
                         if (SongsList.get(position).running) {
                             view.setBackgroundColor(Color.argb(20, 255, 255, 255)); // Selected color
                         } else {
@@ -126,36 +134,37 @@ public class MainActivity extends AppCompatActivity {
         listViewSongs.setAdapter(adapter);
 
 
-        final int[] currentIndex = new int[1];
-        final String[] path = new String[1];
-        final boolean[] flag = {false};
+        flag = false;
+        path = SongsList.get(0).getPath();
+
+
         listViewSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 for (int j = 0; j < adapterView.getChildCount(); j++) {
                     adapterView.getChildAt(j).setBackgroundColor(getColor(R.color.Black));
-                    SongsList.get(j).running = false ;
+                    SongsList.get(j).running = false;
                 }
                 view.setBackgroundColor(Color.argb(20, 255, 255, 255));
 
-                if(SongsList.get(currentIndex[0]).running) SongsList.get(currentIndex[0]).running=false ;
-                path[0] = SongsList.get(i).getPath();
-                currentIndex[0] = i;
+                if (SongsList.get(currentIndex).running)
+                    SongsList.get(currentIndex).running = false;
+                path = SongsList.get(i).getPath();
+                currentIndex = i;
                 SongsList.get(i).running = true;
                 try {
 
 
-                    if(flag[0]) {
+                    if (flag) {
                         mediaPlayer.stop();
-                        flag[0] = false ;
+                        flag = false;
                         imgbtnPlay.setImageResource(android.R.drawable.ic_media_play);
 
                     }
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.reset();
-                    mediaPlayer.setDataSource(path[0]);
+                    mediaPlayer.setDataSource(path);
                     mediaPlayer.prepare();
-
 
 
                 } catch (IOException e) {
@@ -171,14 +180,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (flag[0] == false) {
+                if (flag == false) {
                     if (mediaPlayer != null) {
                         mediaPlayer.start();
                     } else {
 
                         //  mediaPlayer = new MediaPlayer();
                         try {
-                            mediaPlayer.setDataSource(path[0]);
+                            mediaPlayer.setDataSource(path);
                             mediaPlayer.prepare();
                             mediaPlayer.start();
                         } catch (IOException e) {
@@ -186,12 +195,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
-                    flag[0] = true;
+                    flag = true;
                 } else {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                         imgbtnPlay.setImageResource(android.R.drawable.ic_media_play);
-                        flag[0] = false;
+                        flag = false;
                     }
                 }
 
@@ -202,14 +211,14 @@ public class MainActivity extends AppCompatActivity {
         imgbtnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SongsList.get(currentIndex[0]).running = false ;
-                if (currentIndex[0] < SongsList.size() - 1) {
-                    currentIndex[0] ++;
-                    SongsList.get(currentIndex[0]).running = true  ;
-                    playSong(SongsList.get(currentIndex[0] ).getPath());
+                SongsList.get(currentIndex).running = false;
+                if (currentIndex < SongsList.size() - 1) {
+                    currentIndex++;
+                    SongsList.get(currentIndex).running = true;
+                    playSong(SongsList.get(currentIndex).getPath());
 
-                    if(flag[0] == false ){
-                        flag[0]=true ;
+                    if (flag == false) {
+                        flag = true;
                         imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
                     }
                     adapter.notifyDataSetChanged();
@@ -220,13 +229,13 @@ public class MainActivity extends AppCompatActivity {
         imgbtnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SongsList.get(currentIndex[0]).running = false ;
-                if (currentIndex[0]  > 0) {
-                    currentIndex[0] --;
-                    SongsList.get(currentIndex[0]).running = true  ;
-                    playSong(SongsList.get(currentIndex[0] ).getPath());
-                    if(flag[0] == false ){
-                        flag[0]=true ;
+                SongsList.get(currentIndex).running = false;
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    SongsList.get(currentIndex).running = true;
+                    playSong(SongsList.get(currentIndex).getPath());
+                    if (flag == false) {
+                        flag = true;
                         imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
                     }
                     adapter.notifyDataSetChanged();
@@ -236,16 +245,18 @@ public class MainActivity extends AppCompatActivity {
         bottomPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this , SongActivity.class);
-                intent.putExtra("songName",SongsList.get(currentIndex[0]).getSongName());
-                intent.putExtra("singerName",SongsList.get(currentIndex[0]).getSingerName());
-intent.putExtra("curretIndex",currentIndex[0]);
-intent.putExtra("flag",flag[0]);
+                Intent intent = new Intent(MainActivity.this, SongActivity.class);
+                intent.putExtra("songName", SongsList.get(currentIndex).getSongName());
+                intent.putExtra("singerName", SongsList.get(currentIndex).getSingerName());
+                intent.putExtra("curretIndex", currentIndex);
+                intent.putExtra("flag", flag);
 
 
                 startActivity(intent);
+
             }
         });
+
 
     }
 
@@ -254,10 +265,11 @@ intent.putExtra("flag",flag[0]);
         imgbtnPlay = findViewById(R.id.imgbtnPlay);
         imgbtnNext = findViewById(R.id.imgbtnNext);
         imgbtnPrev = findViewById(R.id.imgbtnPrev);
-        bottomPlayer= findViewById(R.id.bottomPlayer);
+        bottomPlayer = findViewById(R.id.bottomPlayer);
 
     }
-    public void playSong(String path) {
+
+    public static void playSong(String path) {
         try {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();

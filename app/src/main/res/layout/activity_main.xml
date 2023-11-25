@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:backgroundTint="@color/black">
+    android:backgroundTint="@color/Black">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#190E2E"
         app:title="@string/app_name"
-        app:logo="@drawable/songicon"
+        app:titleTextColor="@color/white"
+        app:logo="@drawable/baseline_music_note_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,6 +23,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:backgroundTint="@color/Black"
         android:layout_weight="1.6">
 
 
@@ -29,6 +31,10 @@
         <ListView
             android:id="@+id/ListViewSongs"
             android:layout_width="match_parent"
+            android:padding="19dp"
+            android:layout_marginTop="-19dp"
+            android:layout_marginBottom="-19dp"
+android:background="@color/Black"
             android:layout_height="match_parent"></ListView>
 
 
@@ -44,7 +50,7 @@
         android:layout_weight="0.11"
         android:orientation="horizontal"
 
-        android:backgroundTint="@color/black"
+        android:background="@color/Black"
 
        >
         <LinearLayout
@@ -52,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_margin="3dp"
             android:background="@drawable/minimize_player_bakcground"
 
          >
@@ -71,13 +78,13 @@
                 android:layout_weight="0.3"
                 android:backgroundTint="@color/none"/>
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="wrap_content"
+                android:layout_width="43dp"
+                android:layout_height="43dp"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="8dp"
 
                 android:backgroundTint="@color/none"
-                android:src="@drawable/baseline_music_note_24"
+                android:src="@drawable/songicon"
                 android:scaleType="fitXY"
 
                 />
