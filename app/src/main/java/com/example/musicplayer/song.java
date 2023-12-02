@@ -8,20 +8,37 @@ public class song {
     private int songId ;
     private String path ;
     private Uri songImageId;
+    private String Duration ;
 
 
     public boolean running = false ;
     public song() {
     }
 
-    public song(String songName, String singerName , String path) {
+    public song(String songName, String singerName , String path ,String Duration ) {
         this.songName = songName;
         this.singerName = singerName;
         this.path = path ;
+        this.Duration = Duration ;
         running = false ;
 
     }
 
+    public String getDuration() {
+        return Duration;
+    }
+
+    public void setDuration(String duration) {
+        Duration = duration;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
 
     public String getSongName() {
         return songName;

@@ -3,8 +3,10 @@ package com.example.musicplayer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -15,6 +17,9 @@ public class SongActivity extends AppCompatActivity {
     ImageButton imgbtnPlay ;
     ImageButton imgbtnNext ;
     ImageButton imgbtnPrev ;
+     SeekBar seekBar ;
+     Handler handler = new Handler();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +28,10 @@ public class SongActivity extends AppCompatActivity {
         SetUpView();
 
 
-if(MainActivity.flag)imgbtnPlay.setImageResource(R.drawable.baseline_pause_circle_outline_24);
+if(MainActivity.flag) {
+    imgbtnPlay.setImageResource(R.drawable.baseline_pause_circle_outline_24);
+    UpdateDuration();
+}
 else imgbtnPlay.setImageResource(R.drawable.baseline_play_circle_24);
         txtSongName.setText(MainActivity.SongsList.get(MainActivity.currentIndex).getSongName());
         txtSingerName.setText(MainActivity.SongsList.get(MainActivity.currentIndex).getSingerName());
@@ -47,6 +55,7 @@ else imgbtnPlay.setImageResource(R.drawable.baseline_play_circle_24);
                     MainActivity.imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
                     imgbtnPlay.setImageResource(R.drawable.baseline_pause_circle_outline_24);
                     MainActivity.flag= true;
+                    UpdateDuration();
                 } else {
                     if (MainActivity.mediaPlayer != null && MainActivity.mediaPlayer.isPlaying()) {
                         MainActivity.mediaPlayer.pause();
@@ -97,6 +106,8 @@ else imgbtnPlay.setImageResource(R.drawable.baseline_play_circle_24);
 
                         imgbtnPlay.setImageResource(R.drawable.baseline_pause_circle_outline_24);
                     }
+                    txtSongName.setText(MainActivity.SongsList.get(MainActivity.currentIndex).getSongName());
+                    txtSingerName.setText(MainActivity.SongsList.get(MainActivity.currentIndex).getSingerName());
                     MainActivity.adapter.notifyDataSetChanged();
                 }
             }
@@ -110,6 +121,46 @@ else imgbtnPlay.setImageResource(R.drawable.baseline_play_circle_24);
         imgbtnPlay = findViewById(R.id.imgbtnPlay);
         imgbtnNext = findViewById(R.id.imgbtnNext);
         imgbtnPrev = findViewById(R.id.imgbtnPrev);
+        seekBar = findViewById(R.id.seekBar);
+
+    }
+    public  void UpdateDuration() {
+
+        try {
+            int totalDuration = MainActivity.mediaPlayer.getDuration();
+            seekBar.setMax(totalDuration);
+
+
+            Thread thread = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    while (MainActivity.currentDuration[0] < totalDuration) {
+
+                      handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (MainActivity.mediaPlayer.isPlaying()) {
+                                    MainActivity.currentDuration[0] = MainActivity.mediaPlayer.getCurrentPosition();
+                                    seekBar.setProgress(MainActivity.currentDuration[0]);
+                                }
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                    }
+                }
+            });
+
+
+            thread.start();
+        }catch (Exception ex){}
 
     }
 }

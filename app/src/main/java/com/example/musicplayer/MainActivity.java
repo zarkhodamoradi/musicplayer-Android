@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -28,9 +30,11 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ListView listViewSongs;
+    static Handler handler = new Handler();
     public static ImageButton imgbtnPlay;
     ImageButton imgbtnNext;
     ImageButton imgbtnPrev;
+    static ProgressBar progressBarSong;
     public static MediaPlayer mediaPlayer;
     public static String path;
     int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
@@ -40,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public static int currentIndex = 0;
     public static ArrayList<song> SongsList;
     public static ArrayAdapter<song> adapter;
+    final static int[] currentDuration = {0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Process the music information (e.g., display in a ListView or RecyclerView)
                     // ...
-                    SongsList.add(new song(title, artist, path));
+                    SongsList.add(new song(title, artist, path, duration));
                 } else {
                     // Log an error or handle the situation accordingly
                     // ...
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         text1.setText(SongsList.get(position).getSongName());
                         text2.setText(SongsList.get(position).getSingerName());
 
-                        text2.setTextColor(Color.argb(100,255,255,255));
+                        text2.setTextColor(Color.argb(100, 255, 255, 255));
                         if (SongsList.get(position).running) {
                             view.setBackgroundColor(Color.argb(20, 255, 255, 255)); // Selected color
                         } else {
@@ -194,8 +199,11 @@ public class MainActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
+
                     imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
                     flag = true;
+                    UpdateDuration();
+
                 } else {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
@@ -266,6 +274,48 @@ public class MainActivity extends AppCompatActivity {
         imgbtnNext = findViewById(R.id.imgbtnNext);
         imgbtnPrev = findViewById(R.id.imgbtnPrev);
         bottomPlayer = findViewById(R.id.bottomPlayer);
+        progressBarSong = findViewById(R.id.progressBarSong);
+
+
+    }
+
+
+    public static void UpdateDuration() {
+
+       try {
+           int totalDuration = mediaPlayer.getDuration();
+           progressBarSong.setMax(totalDuration);
+
+
+           Thread thread = new Thread(new Runnable() {
+
+               @Override
+               public void run() {
+
+                   while (currentDuration[0] < totalDuration) {
+                       try {
+                           Thread.sleep(50);
+                       } catch (InterruptedException e) {
+                           throw new RuntimeException(e);
+                       }
+
+                       handler.post(new Runnable() {
+                           @Override
+                           public void run() {
+                               if (mediaPlayer.isPlaying()) {
+                                   currentDuration[0] = mediaPlayer.getCurrentPosition();
+                                   progressBarSong.setProgress(currentDuration[0]);
+                               }
+                           }
+                       });
+
+                   }
+               }
+           });
+
+
+           thread.start();
+       }catch (Exception ex){}
 
     }
 
@@ -274,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.stop();
             }
+
             mediaPlayer.reset();
             mediaPlayer.setDataSource(path);
             mediaPlayer.prepare();
