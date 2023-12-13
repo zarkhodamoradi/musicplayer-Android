@@ -1,5 +1,6 @@
 package com.example.musicplayer;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 public class song {
@@ -7,7 +8,7 @@ public class song {
     private String singerName;
     private int songId ;
     private String path ;
-    private Uri songImageId;
+    private Drawable songImageId;
     private String Duration ;
 
 
@@ -20,6 +21,7 @@ public class song {
         this.singerName = singerName;
         this.path = path ;
         this.Duration = Duration ;
+
         running = false ;
 
     }
@@ -56,11 +58,11 @@ public class song {
         this.singerName = singerName;
     }
 
-    public Uri getSongImageId() {
+    public Drawable getSongImageId() {
         return songImageId;
     }
 
-    public void setSongImageId(Uri songImageId) {
+    public void setSongImageId(Drawable songImageId) {
         this.songImageId = songImageId;
     }
 

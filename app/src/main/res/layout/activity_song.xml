@@ -117,8 +117,28 @@
         android:layout_height="wrap_content"
         android:progressTint="#FFFFFF"/>
 
-    <Space
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"/>
+        android:orientation="horizontal"
+        android:padding="11dp"
+        android:layout_weight="0.3">
+
+        <TextClock
+            android:id="@+id/textClockDuration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3" />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"/>
+        <TextClock
+            android:id="@+id/textClockLeftDuration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:gravity="right"/>
+    </LinearLayout>
 </LinearLayout>

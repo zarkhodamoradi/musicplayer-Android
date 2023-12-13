@@ -8,7 +8,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +30,8 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<song> SongsList;
     public static ArrayAdapter<song> adapter;
     final static int[] currentDuration = {0};
+
+    public static  Drawable songImageDrawble ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,14 +105,14 @@ public class MainActivity extends AppCompatActivity {
                     String title = cursor.getString(titleColumnIndex);
                     String artist = cursor.getString(artistColumnIndex);
                     String path = cursor.getString(pathColumnIndex);
-                    // String albumId = cursor.getString(albumIdColumnIndex);
+                     String albumId = cursor.getString(albumIdColumnIndex);
                     String duration = cursor.getString(DurationColumnIndex);
 
-                    // Retrieve the album art using the album ID
-                    // Uri albumArtUri = Uri.parse("content://media/external/audio/albumart/" + albumId);
-
-                    // Process the music information (e.g., display in a ListView or RecyclerView)
-                    // ...
+//                    Bitmap albumArtBitmap = getAlbumArtBitmap(albumId);
+//                    Drawable albumArtDrawable = null;
+//                    if (albumArtBitmap != null) {
+//                        albumArtDrawable = new BitmapDrawable(getResources(), albumArtBitmap);
+//                    }
                     SongsList.add(new song(title, artist, path, duration));
                 } else {
                     // Log an error or handle the situation accordingly
@@ -142,7 +150,24 @@ public class MainActivity extends AppCompatActivity {
         flag = false;
         path = SongsList.get(0).getPath();
 
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.prepare();
+            SongsList.get(currentIndex).running = true ;
+            adapter.notifyDataSetChanged();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                progressBarSong.setMax(mediaPlayer.getDuration());
+                progressBarSong.setProgress(mediaPlayer.getCurrentPosition());
+
+            }
+        }, 0, 200);
         listViewSongs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -165,11 +190,18 @@ public class MainActivity extends AppCompatActivity {
                         flag = false;
                         imgbtnPlay.setImageResource(android.R.drawable.ic_media_play);
 
+
                     }
-                    mediaPlayer = new MediaPlayer();
+
                     mediaPlayer.reset();
                     mediaPlayer.setDataSource(path);
                     mediaPlayer.prepare();
+                    if(flag == false) {
+                        flag = true ;
+                        imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
+                        mediaPlayer.start();
+                    }
+
 
 
                 } catch (IOException e) {
@@ -202,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
                     imgbtnPlay.setImageResource(android.R.drawable.ic_media_pause);
                     flag = true;
-                    UpdateDuration();
+
 
                 } else {
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
@@ -280,44 +312,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void UpdateDuration() {
 
-       try {
-           int totalDuration = mediaPlayer.getDuration();
-           progressBarSong.setMax(totalDuration);
-
-
-           Thread thread = new Thread(new Runnable() {
-
-               @Override
-               public void run() {
-
-                   while (currentDuration[0] < totalDuration) {
-                       try {
-                           Thread.sleep(50);
-                       } catch (InterruptedException e) {
-                           throw new RuntimeException(e);
-                       }
-
-                       handler.post(new Runnable() {
-                           @Override
-                           public void run() {
-                               if (mediaPlayer.isPlaying()) {
-                                   currentDuration[0] = mediaPlayer.getCurrentPosition();
-                                   progressBarSong.setProgress(currentDuration[0]);
-                               }
-                           }
-                       });
-
-                   }
-               }
-           });
-
-
-           thread.start();
-       }catch (Exception ex){}
-
-    }
 
     public static void playSong(String path) {
         try {
@@ -335,4 +330,22 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
+//    private Bitmap getAlbumArtBitmap(String albumId) {
+//        Cursor albumCursor = getContentResolver().query(
+//                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+//                new String[]{MediaStore.Audio.Albums.ALBUM_ART},
+//                MediaStore.Audio.Albums._ID + "=?",
+//                new String[]{albumId},
+//                null
+//        );
+//
+//        Bitmap albumArtBitmap = null;
+//        if (albumCursor != null && albumCursor.moveToFirst() && albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)>=0) {
+//            String albumArtPath = albumCursor.getString(albumCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+//            albumArtBitmap = BitmapFactory.decodeFile(albumArtPath);
+//            albumCursor.close();
+//        }
+//
+//        return albumArtBitmap;
+//    }
 }
